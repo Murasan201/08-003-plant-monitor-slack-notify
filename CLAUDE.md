@@ -33,5 +33,37 @@
 - すべてのPythonコードはこれらの規約に準拠すること
 - 新規コード作成時は必ず規約を確認すること
 
+### 6. セキュリティチェック（GitHub公開前の必須確認）
+- **必須**: コミット・プッシュ前に以下の機密情報が含まれていないことを確認する
+
+#### チェック項目:
+- [ ] **API キー・トークン**: Slack WebHook URL、各種APIキーなど
+- [ ] **パスワード・認証情報**: データベースパスワード、SSH秘密鍵など
+- [ ] **個人情報**: メールアドレス、電話番号、住所など
+- [ ] **環境変数の実値**: `.env` ファイルの実際の値
+- [ ] **内部情報**: IPアドレス、ホスト名、内部URLなど
+
+#### 安全な記載方法:
+```python
+# ✅ 良い例（プレースホルダー使用）
+SLACK_WEBHOOK_URL = "YOUR_SLACK_WEBHOOK_URL_HERE"
+API_KEY = "YOUR_API_KEY_HERE"
+
+# ❌ 悪い例（実際の値を記載）
+SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXX"
+API_KEY = "sk-1234567890abcdefghijklmnopqrstuvwxyz"
+```
+
+#### 確認コマンド:
+```bash
+# 機密情報のパターンを検索
+git grep -i "password\|secret\|token\|api[_-]key\|webhook"
+```
+
+#### 万が一コミット済みの場合:
+- **即座に対応**: GitHubのシークレット履歴を削除
+- **トークン無効化**: 該当するAPIキー・トークンをすぐに無効化・再発行
+- **`.gitignore` 追加**: 機密情報を含むファイルを除外
+
 ---
 *初心者が理解しやすく、すぐに動かせることを最優先とする*
