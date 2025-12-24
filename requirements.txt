@@ -1,3 +1,5 @@
 requests>=2.25.1
 adafruit-circuitpython-ads1x15>=2.2.0
 adafruit-blinka>=8.0.0
+python-dotenv>=1.0.0
+rpi-lgpio>=0.6

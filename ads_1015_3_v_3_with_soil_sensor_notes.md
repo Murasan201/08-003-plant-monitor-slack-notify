@@ -10,7 +10,10 @@
 
 ## 3. 使用デバイスおよび部品
 - **マイコン**: Raspberry Pi 5
-- **センサー**: 容量式土壌水分センサー（例：[Hailege 土壌水分センサーモジュール](https://www.amazon.co.jp/dp/B08R5H18V9)）
+- **センサー**: 容量式土壌水分センサー（SunFounder Ultimate Sensor Kit付属）
+  - 製品ドキュメント: https://docs.sunfounder.com/projects/ultimate-sensor-kit/ja/latest/components_basic/10-component_soil.html
+  - 使用IC: 555タイマーIC（NE555/LM555、DIL8パッケージ）
+  - 動作原理: 555タイマーICが発振回路を構成し、土壌の静電容量変化を検出。水分量に応じて容量が変化すると発振周波数が変わり、それをアナログ電圧として出力する。555タイマーICは安価で入手性が良く、容量式土壌水分センサーで広く採用されている業界標準的な設計。
 - **ADコンバータ**: ADS1015 (I²C接続)
 - **通知先**: Slack（WebHook URLを利用）
 - **電源仕様**: ADS1015および土壌水分センサーはともに**3.3V駆動**とする

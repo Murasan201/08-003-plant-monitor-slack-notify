@@ -6,25 +6,30 @@ Raspberry Pi 5 + ADS1015 + 容量式土壌水分センサーで植物の状態�
 """
 
 # 標準ライブラリ
+import os
 import time
 import datetime
 import json
 
 # サードパーティライブラリ
 import requests
+from dotenv import load_dotenv
 from board import SCL, SDA
 import busio
 import adafruit_ads1x15.ads1015 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
-# 定数 - 使用前に編集してください
-SLACK_WEBHOOK_URL = "YOUR_SLACK_WEBHOOK_URL_HERE"  # SlackのIncoming Webhook URL
+# .envファイルから環境変数を読み込み
+load_dotenv()
+
+# 定数
+SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "")  # 環境変数から取得
 MEASUREMENT_INTERVAL = 30 * 60  # 測定間隔（秒）: 30分ごと
 
 # センサー校正値（実際の環境に合わせて調整してください）
 # 校正方法: センサーを完全に乾燥させた状態でDRY_VALUE、水に浸した状態でWET_VALUEを測定
-DRY_VALUE = 26000    # 乾燥時のセンサー値（ADC生値）
-WET_VALUE = 13000    # 湿潤時のセンサー値（ADC生値）
+DRY_VALUE = 17500    # 乾燥時のセンサー値（ADC生値）- 空気中での実測値
+WET_VALUE = 7800     # 湿潤時のセンサー値（ADC生値）- 水に浸した時の実測値
 
 def setup_sensor():
     """
@@ -43,8 +48,8 @@ def setup_sensor():
         # ADS1015を初期化（デフォルトI²Cアドレス: 0x48）
         ads = ADS.ADS1015(i2c)
 
-        # A0チャンネルを使用（土壌水分センサー接続先）
-        channel = AnalogIn(ads, ADS.P0)
+        # A0チャンネルを使用（土壌水分センサー接続先、チャンネル番号0）
+        channel = AnalogIn(ads, 0)
 
         return channel
     except Exception as e:
@@ -101,9 +106,9 @@ def send_slack_notification(message):
         bool: 送信成功時はTrue、失敗時はFalse
     """
     # WebHook URLの設定確認
-    if SLACK_WEBHOOK_URL == "YOUR_SLACK_WEBHOOK_URL_HERE":
+    if not SLACK_WEBHOOK_URL:
         print("Slack WebHook URLが設定されていません")
-        print("対処方法: SLACK_WEBHOOK_URL変数にWebHook URLを設定してください")
+        print("対処方法: .envファイルにSLACK_WEBHOOK_URLを設定してください")
         return False
 
     try:
